@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CONFIRM YOUR EXISTENCE — Global Human Verification Program</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --blue: #00d4ff;
+  --blue2: #0099cc;
+  --blue-dim: #003a4d;
+  --dark: #020810;
+  --dark2: #050e1a;
+  --dark3: #081525;
+  --red-warn: #ff3355;
+  --green: #00ff88;
+  --text: #c8e8f0;
+  --text-muted: #4a7a8a;
+  --glass: rgba(0,180,255,0.05);
+  --glass-border: rgba(0,212,255,0.15);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--dark);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  overflow-x:hidden;
+  cursor:crosshair;
+}
+
+/* ── PARTICLES ── */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* ── SCANLINE OVERLAY ── */
+body::after{
+  content:'';
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,0.015) 2px,rgba(0,212,255,0.015) 4px);
+  animation:scanMove 8s linear infinite;
+}
+@keyframes scanMove{from{background-position:0 0;}to{background-position:0 100px;}}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(2,8,16,0.92);
+  border-bottom:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 28px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;color:var(--text-muted);
+}
+.topbar-logo{
+  font-family:'Orbitron',monospace;
+  font-size:0.75rem;font-weight:700;
+  color:var(--blue);
+  letter-spacing:0.2em;
+}
+.topbar-right{display:flex;gap:20px;align-items:center;}
+.live-pill{
+  display:flex;align-items:center;gap:5px;
+  color:var(--green);font-size:0.68rem;
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:2;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:100px 20px 60px;
+  text-align:center;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(0,180,255,0.1) 0%,transparent 70%),
+    radial-gradient(ellipse 100% 80% at 50% 100%,rgba(0,50,80,0.4) 0%,transparent 60%);
+}
+
+/* World grid lines */
+.hero::before{
+  content:'';position:absolute;inset:0;z-index:-1;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,255,0.04) 1px,transparent 1px);
+  background-size:40px 40px;
+  mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);
+}
+
+.classification{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.72rem;letter-spacing:0.35em;
+  color:var(--blue);
+  border:1px solid rgba(0,212,255,0.3);
+  padding:5px 16px;border-radius:3px;
+  margin-bottom:28px;
+  background:rgba(0,212,255,0.05);
+  animation:fadeUp 0.6s 0.2s both;
+}
+
+.hero h1{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(2.4rem,7vw,6rem);
+  font-weight:900;
+  line-height:1;
+  letter-spacing:0.04em;
+  color:#fff;
+  text-shadow:0 0 40px rgba(0,212,255,0.6),0 0 80px rgba(0,212,255,0.2);
+  margin-bottom:16px;
+  animation:fadeUp 0.6s 0.4s both;
+}
+.hero h1 span{
+  color:var(--blue);
+  animation:glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse{
+  0%,100%{text-shadow:0 0 30px rgba(0,212,255,0.8);}
+  50%{text-shadow:0 0 60px rgba(0,212,255,1),0 0 100px rgba(0,212,255,0.5);}
+}
+
+.hero-sub{
+  font-size:clamp(1rem,2.5vw,1.35rem);
+  font-weight:300;letter-spacing:0.08em;
+  color:rgba(200,232,240,0.7);
+  max-width:600px;line-height:1.8;
+  margin-bottom:12px;
+  animation:fadeUp 0.6s 0.6s both;
+}
+.hero-sub strong{color:var(--blue);}
+
+.threat-level{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.72rem;
+  color:var(--red-warn);
+  border:1px solid rgba(255,51,85,0.3);
+  padding:5px 14px;border-radius:3px;
+  background:rgba(255,51,85,0.06);
+  margin-bottom:40px;
+  animation:fadeUp 0.6s 0.7s both;
+}
+.threat-blink{animation:blink 0.6s infinite;}
+
+/* ── STATS ROW ── */
+.stats-row{
+  display:flex;flex-wrap:wrap;gap:16px;justify-content:center;
+  margin-bottom:48px;
+  animation:fadeUp 0.6s 0.8s both;
+}
+.stat-card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:8px;
+  padding:18px 24px;
+  text-align:center;
+  min-width:160px;
+  backdrop-filter:blur(8px);
+  position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);
+  animation:scanH 2s linear infinite;
+}
+@keyframes scanH{from{transform:translateX(-100%);}to{transform:translateX(100%);}}
+.stat-num{
+  font-family:'Orbitron',monospace;
+  font-size:1.6rem;font-weight:700;
+  color:var(--blue);
+  text-shadow:0 0 12px rgba(0,212,255,0.5);
+}
+.stat-num.green{color:var(--green);text-shadow:0 0 12px rgba(0,255,136,0.5);}
+.stat-num.red{color:var(--red-warn);text-shadow:0 0 12px rgba(255,51,85,0.5);}
+.stat-label{
+  font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--text-muted);margin-top:4px;
+}
+
+/* ── CTA BUTTON ── */
+.cta-wrap{animation:fadeUp 0.6s 1s both;margin-bottom:20px;}
+.btn-exist{
+  position:relative;
+  display:inline-flex;align-items:center;gap:14px;
+  background:transparent;
+  border:2px solid var(--blue);
+  color:#fff;
+  font-family:'Orbitron',monospace;
+  font-size:clamp(0.9rem,2vw,1.1rem);
+  font-weight:700;letter-spacing:0.15em;text-transform:uppercase;
+  padding:20px 48px;
+  border-radius:4px;
+  cursor:pointer;
+  text-decoration:none;
+  overflow:hidden;
+  transition:all 0.3s;
+  box-shadow:0 0 30px rgba(0,212,255,0.25),inset 0 0 30px rgba(0,212,255,0.05);
+}
+.btn-exist::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,212,255,0.15),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.btn-exist::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+  transition:left 0.5s;
+}
+.btn-exist:hover{
+  box-shadow:0 0 60px rgba(0,212,255,0.6),inset 0 0 40px rgba(0,212,255,0.1);
+  transform:translateY(-2px) scale(1.02);
+  border-color:#fff;
+}
+.btn-exist:hover::before{opacity:1;}
+.btn-exist:hover::after{left:150%;}
+.btn-exist:active{transform:scale(0.97);}
+.btn-glow-ring{
+  position:absolute;inset:-6px;border-radius:8px;
+  border:1px solid rgba(0,212,255,0.3);
+  animation:ringPulse 2s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes ringPulse{
+  0%,100%{transform:scale(1);opacity:0.5;}
+  50%{transform:scale(1.04);opacity:1;}
+}
+
+.live-notice{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.72rem;color:var(--text-muted);
+  margin-top:12px;
+  animation:fadeUp 0.6s 1.1s both;
+}
+.live-notice span{color:var(--green);}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ── LOADING MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:999;
+  background:rgba(2,8,16,0.95);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.3s;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.show{opacity:1;pointer-events:all;}
+.modal-box{
+  background:var(--dark3);
+  border:1px solid var(--glass-border);
+  border-radius:8px;
+  padding:48px 40px;
+  text-align:center;
+  max-width:440px;width:90%;
+  position:relative;overflow:hidden;
+}
+.modal-box::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--blue2),var(--blue),var(--blue2));
+  animation:scanH 1.5s linear infinite;
+}
+.modal-spinner{
+  width:60px;height:60px;margin:0 auto 24px;
+  border:3px solid var(--glass-border);
+  border-top-color:var(--blue);
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.modal-title{
+  font-family:'Orbitron',monospace;font-size:0.85rem;font-weight:700;
+  color:var(--blue);letter-spacing:0.15em;margin-bottom:12px;
+}
+.modal-status{
+  font-family:'Share Tech Mono',monospace;font-size:0.78rem;
+  color:var(--text-muted);line-height:1.9;
+}
+.modal-status .ok{color:var(--green);}
+.modal-bar-wrap{
+  background:rgba(0,212,255,0.08);border-radius:100px;height:4px;
+  margin-top:20px;overflow:hidden;
+}
+.modal-bar{
+  height:100%;background:var(--blue);border-radius:100px;
+  width:0%;transition:width 0.3s linear;
+  box-shadow:0 0 8px rgba(0,212,255,0.8);
+}
+
+/* ── SECTION SHARED ── */
+section{position:relative;z-index:2;padding:80px 20px;}
+.section-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.3em;color:var(--blue);
+  text-transform:uppercase;margin-bottom:10px;
+}
+.section-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1.6rem,4vw,2.6rem);font-weight:700;
+  color:#fff;letter-spacing:0.05em;
+  text-shadow:0 0 20px rgba(0,212,255,0.3);
+  margin-bottom:40px;
+}
+
+/* ── WARNING SECTION ── */
+.warn-section{
+  background:linear-gradient(180deg,var(--dark) 0%,var(--dark2) 100%);
+}
+.warn-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;max-width:900px;margin:0 auto;
+}
+.warn-card{
+  background:rgba(255,51,85,0.04);
+  border:1px solid rgba(255,51,85,0.2);
+  border-radius:8px;padding:28px 24px;
+  position:relative;overflow:hidden;
+  transition:transform 0.3s,border-color 0.3s;
+}
+.warn-card:hover{transform:translateY(-4px);border-color:rgba(255,51,85,0.5);}
+.warn-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--red-warn),transparent);
+}
+.warn-icon{font-size:2.2rem;margin-bottom:12px;}
+.warn-card h3{
+  font-family:'Orbitron',monospace;font-size:0.85rem;font-weight:700;
+  color:var(--red-warn);letter-spacing:0.08em;margin-bottom:10px;
+  text-transform:uppercase;
+}
+.warn-card p{font-size:0.95rem;color:rgba(200,232,240,0.65);line-height:1.7;}
+.warn-code{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.68rem;color:rgba(255,51,85,0.5);
+  margin-top:14px;
+}
+
+/* ── HOW IT WORKS ── */
+.how-section{background:var(--dark2);}
+.steps{display:flex;flex-direction:column;gap:0;max-width:640px;margin:0 auto;}
+.step{
+  display:flex;gap:24px;align-items:flex-start;
+  padding:28px 0;
+  border-bottom:1px solid rgba(0,212,255,0.08);
+  position:relative;
+}
+.step:last-child{border-bottom:none;}
+.step-num{
+  font-family:'Orbitron',monospace;font-size:2.2rem;font-weight:900;
+  color:var(--blue);opacity:0.2;flex-shrink:0;width:60px;text-align:center;
+  line-height:1;margin-top:4px;
+}
+.step-icon{
+  width:52px;height:52px;flex-shrink:0;
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;
+}
+.step-body h3{
+  font-family:'Orbitron',monospace;font-size:0.9rem;font-weight:700;
+  color:var(--blue);letter-spacing:0.08em;margin-bottom:8px;
+  text-transform:uppercase;
+}
+.step-body p{font-size:0.95rem;color:rgba(200,232,240,0.65);line-height:1.7;}
+.step-body .step-note{
+  font-family:'Share Tech Mono',monospace;font-size:0.72rem;
+  color:var(--text-muted);margin-top:8px;
+}
+
+/* ── CERTIFICATE ── */
+.cert-section{background:var(--dark);text-align:center;}
+.cert-wrap{
+  max-width:600px;margin:0 auto;
+  background:linear-gradient(145deg,#071220,#0a1a2e);
+  border:2px solid rgba(0,212,255,0.3);
+  border-radius:12px;
+  padding:48px 40px;
+  position:relative;overflow:hidden;
+  box-shadow:0 0 60px rgba(0,212,255,0.15),0 0 120px rgba(0,212,255,0.05);
+}
+.cert-wrap::before{
+  content:'';position:absolute;inset:8px;
+  border:1px solid rgba(0,212,255,0.1);
+  border-radius:8px;pointer-events:none;
+}
+.cert-corner{
+  position:absolute;width:20px;height:20px;
+  border-color:var(--blue);border-style:solid;
+  border-width:0;opacity:0.6;
+}
+.cert-corner.tl{top:16px;left:16px;border-top-width:2px;border-left-width:2px;}
+.cert-corner.tr{top:16px;right:16px;border-top-width:2px;border-right-width:2px;}
+.cert-corner.bl{bottom:16px;left:16px;border-bottom-width:2px;border-left-width:2px;}
+.cert-corner.br{bottom:16px;right:16px;border-bottom-width:2px;border-right-width:2px;}
+.cert-seal{
+  width:70px;height:70px;border-radius:50%;
+  border:3px solid var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;margin:0 auto 20px;
+  background:radial-gradient(circle,rgba(0,212,255,0.1),transparent);
+  box-shadow:0 0 20px rgba(0,212,255,0.4);
+  animation:rotateSeal 20s linear infinite;
+}
+@keyframes rotateSeal{from{box-shadow:0 0 20px rgba(0,212,255,0.4);}50%{box-shadow:0 0 40px rgba(0,212,255,0.8);}to{box-shadow:0 0 20px rgba(0,212,255,0.4);}}
+.cert-agency{
+  font-family:'Share Tech Mono',monospace;font-size:0.68rem;
+  letter-spacing:0.25em;color:var(--blue);
+  text-transform:uppercase;margin-bottom:6px;
+}
+.cert-title{
+  font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;
+  color:#fff;letter-spacing:0.1em;margin-bottom:28px;
+  text-shadow:0 0 20px rgba(0,212,255,0.4);
+}
+.cert-divider{
+  border:none;border-top:1px solid rgba(0,212,255,0.15);
+  margin:20px 0;
+}
+.cert-field{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid rgba(0,212,255,0.06);
+  font-size:0.9rem;
+}
+.cert-field:last-of-type{border-bottom:none;}
+.cert-key{
+  font-family:'Share Tech Mono',monospace;font-size:0.7rem;
+  color:var(--text-muted);letter-spacing:0.15em;text-transform:uppercase;
+}
+.cert-val{
+  font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;
+  color:var(--blue);
+}
+.cert-val.green{color:var(--green);}
+.cert-stamp{
+  margin-top:24px;
+  font-family:'Orbitron',monospace;font-size:0.75rem;font-weight:700;
+  color:rgba(0,255,136,0.6);letter-spacing:0.3em;
+  border:1px solid rgba(0,255,136,0.3);
+  display:inline-block;padding:6px 20px;border-radius:3px;
+  transform:rotate(-3deg);
+}
+.cert-fine{
+  font-family:'Share Tech Mono',monospace;font-size:0.62rem;
+  color:var(--text-muted);margin-top:20px;line-height:1.7;
+}
+
+/* ── COMMENTS ── */
+.comments-section{background:var(--dark2);overflow:hidden;}
+.comments-feed{
+  max-width:700px;margin:0 auto;
+  display:flex;flex-direction:column;gap:12px;
+  max-height:420px;overflow:hidden;
+  position:relative;
+}
+.comments-feed::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:80px;
+  background:linear-gradient(transparent,var(--dark2));
+  pointer-events:none;
+}
+.comment{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:8px;padding:16px 20px;
+  display:flex;gap:14px;align-items:flex-start;
+  animation:slideComment 0.5s ease both;
+}
+@keyframes slideComment{
+  from{opacity:0;transform:translateY(-16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.comment-avatar{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue2),#003a5e);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;border:1px solid var(--glass-border);
+}
+.comment-name{
+  font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;
+  color:var(--blue);letter-spacing:0.1em;margin-bottom:5px;
+}
+.comment-text{font-size:0.95rem;color:rgba(200,232,240,0.8);line-height:1.5;}
+.comment-meta{
+  font-family:'Share Tech Mono',monospace;font-size:0.65rem;
+  color:var(--text-muted);margin-top:5px;
+}
+.comment-badge{
+  margin-left:auto;flex-shrink:0;
+  font-family:'Share Tech Mono',monospace;font-size:0.62rem;
+  color:var(--green);border:1px solid rgba(0,255,136,0.3);
+  padding:3px 8px;border-radius:3px;
+  background:rgba(0,255,136,0.05);
+  white-space:nowrap;
+}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:2;
+  background:var(--dark);
+  border-top:1px solid var(--glass-border);
+  padding:40px 20px;text-align:center;
+}
+.footer-logo{
+  font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;
+  color:var(--blue);letter-spacing:0.2em;opacity:0.5;margin-bottom:12px;
+}
+.footer-links{
+  display:flex;gap:24px;justify-content:center;
+  font-family:'Share Tech Mono',monospace;font-size:0.7rem;
+  color:var(--text-muted);margin-bottom:16px;flex-wrap:wrap;
+}
+.footer-links a{color:var(--text-muted);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--blue);}
+.footer-disc{
+  font-size:0.72rem;color:var(--text-muted);line-height:1.8;max-width:560px;margin:0 auto;
+}
+.footer-disc em{color:rgba(200,232,240,0.4);font-style:normal;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--dark3);border:1px solid var(--blue);
+  border-radius:4px;padding:12px 24px;z-index:9999;
+  font-family:'Share Tech Mono',monospace;font-size:0.8rem;color:var(--blue);
+  letter-spacing:0.1em;pointer-events:none;
+  transition:transform 0.4s cubic-bezier(0.16,1,0.3,1),opacity 0.4s;
+  opacity:0;white-space:nowrap;
+  box-shadow:0 0 20px rgba(0,212,255,0.3);
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* SCROLL ANIMATIONS */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s,transform 0.7s;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:600px){
+  .cert-wrap{padding:32px 20px;}
+  .cert-field{flex-direction:column;align-items:flex-start;gap:4px;}
+  .stats-row{gap:10px;}
+  .stat-card{min-width:130px;padding:14px 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<canvas id="particles"></canvas>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">GEA // GLOBAL EXISTENCE AGENCY</div>
+  <div class="topbar-right">
+    <div class="live-pill"><div class="live-dot"></div>LIVE GLOBAL FEED</div>
+    <div style="display:none;display:flex;gap:6px;" id="topStatus">
+      <span style="color:var(--text-muted);">THREAT LEVEL:</span>
+      <span style="color:var(--red-warn);">UNVERIFIED</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="classification">// DOCUMENT CLASS: URGENT — GLOBAL POPULATION CRISIS //</div>
+
+  <h1>CONFIRM YOUR<br><span>EXISTENCE</span> 🌍</h1>
+
+  <p class="hero-sub">
+    Global population records are <strong>critically incomplete.</strong><br>
+    Help humanity by verifying your continued existence.<br>
+    Failure to act may result in serious statistical consequences.
+  </p>
+
+  <div class="threat-level">
+    <span class="threat-blink">⚠</span>
+    UNVERIFIED HUMANS DETECTED IN YOUR REGION — IMMEDIATE ACTION REQUIRED
+  </div>
+
+  <!-- FAKE STATS -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card">
+      <div class="stat-num green" id="verifiedToday">3,847</div>
+      <div class="stat-label">Verified Humans Today</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num red" id="unconfirmed">2,148,302,419</div>
+      <div class="stat-label">Unconfirmed Citizens</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="accuracy">31.4%</div>
+      <div class="stat-label">Population Accuracy</div>
+    </div>
+  </div>
+
+  <div class="cta-wrap">
+    <button class="btn-exist" onclick="triggerExistence()">
+      <div class="btn-glow-ring"></div>
+      ✅ YES, I EXIST — $1
+    </button>
+  </div>
+  <div class="live-notice"><span>●</span> Someone from Botswana just confirmed they exist.</div>
+</section>
+
+<!-- ═══ WARNINGS ═══ -->
+<section class="warn-section reveal">
+  <div style="max-width:900px;margin:0 auto;text-align:center;">
+    <p class="section-tag">// DEPARTMENT OF HUMAN STATISTICS — URGENT BULLETIN</p>
+    <h2 class="section-title">⚠️ Critical Warnings</h2>
+    <div class="warn-grid">
+      <div class="warn-card">
+        <div class="warn-icon">💀</div>
+        <h3>Accidental Unexistence Risk</h3>
+        <p>Failure to verify within the next 72 hours may result in your accidental removal from the global population database. You will still physically exist. Probably.</p>
+        <div class="warn-code">ERR_HUMAN_NOT_FOUND — CODE 404</div>
+      </div>
+      <div class="warn-card">
+        <div class="warn-icon">📋</div>
+        <h3>Department Requires Cooperation</h3>
+        <p>The Department of Human Statistics has been counting people since 1823. We have never been this desperate. Please. We're begging you.</p>
+        <div class="warn-code">MEMO-2025-HR-EXISTENCE-URGENT</div>
+      </div>
+      <div class="warn-card">
+        <div class="warn-icon">🌐</div>
+        <h3>Millions Remain Unverified</h3>
+        <p>Over 2 billion humans have not confirmed their existence. Some of them might be ghosts. We genuinely cannot tell the difference anymore.</p>
+        <div class="warn-code">GLOBAL_UNVERIFIED_COUNT: 2,148,302,419</div>
+      </div>
+      <div class="warn-card">
+        <div class="warn-icon">🤖</div>
+        <h3>AI Infiltration Suspected</h3>
+        <p>Unverified individuals are statistically indistinguishable from AI bots in our database. Paying $1 is the only known way to prove you have a soul.</p>
+        <div class="warn-code">SOUL_DETECTION_MODULE: ACTIVE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="how-section reveal">
+  <div style="max-width:640px;margin:0 auto;text-align:center;">
+    <p class="section-tag">// OFFICIAL VERIFICATION PROTOCOL — REV 7.2.1</p>
+    <h2 class="section-title">How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">💳</div>
+        <div class="step-body">
+          <h3>Submit $1 Verification Fee</h3>
+          <p>Click the button. Pay $1 via PayPal. This is how we know you are real. No human has ever voluntarily paid $1 for nothing. It's science.</p>
+          <div class="step-note">// FEE IS NON-REFUNDABLE BECAUSE WE ALREADY SPENT IT</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">🖥️</div>
+        <div class="step-body">
+          <h3>Your Existence Is Recorded</h3>
+          <p>Our servers contact the Global Population Matrix. Your biometric soul signature is logged in our database (we made that up but it sounds very official).</p>
+          <div class="step-note">// PROCESS TAKES 2–3 BUSINESS ETERNITIES</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">🏅</div>
+        <div class="step-body">
+          <h3>Receive Official Certificate</h3>
+          <p>You will not actually receive a certificate. But you'll know in your heart that you did the right thing for humanity. Sleep well, verified citizen.</p>
+          <div class="step-note">// CERTIFICATE IS SPIRITUAL, NOT LEGAL OR PHYSICAL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CERTIFICATE ═══ -->
+<section class="cert-section reveal">
+  <div style="text-align:center;margin-bottom:40px;">
+    <p class="section-tag">// OFFICIAL DOCUMENT — SAMPLE PREVIEW</p>
+    <h2 class="section-title">Your Certificate Preview</h2>
+  </div>
+  <div class="cert-wrap">
+    <div class="cert-corner tl"></div>
+    <div class="cert-corner tr"></div>
+    <div class="cert-corner bl"></div>
+    <div class="cert-corner br"></div>
+    <div class="cert-seal">🌍</div>
+    <div class="cert-agency">Global Existence Agency — Est. When Time Began</div>
+    <div class="cert-title">CERTIFICATE OF EXISTENCE</div>
+    <hr class="cert-divider"/>
+    <div class="cert-field">
+      <div class="cert-key">Human ID</div>
+      <div class="cert-val" id="certId">GEA-2025-██████</div>
+    </div>
+    <div class="cert-field">
+      <div class="cert-key">Classification</div>
+      <div class="cert-val">CONFIRMED BIOLOGICAL HUMAN</div>
+    </div>
+    <div class="cert-field">
+      <div class="cert-key">Soul Status</div>
+      <div class="cert-val green">DETECTED ✓</div>
+    </div>
+    <div class="cert-field">
+      <div class="cert-key">Existence Verified</div>
+      <div class="cert-val green" id="certDate">LOADING...</div>
+    </div>
+    <div class="cert-field">
+      <div class="cert-key">Approved By</div>
+      <div class="cert-val">GLOBAL EXISTENCE AGENCY</div>
+    </div>
+    <div class="cert-field">
+      <div class="cert-key">Ghost Probability</div>
+      <div class="cert-val green">0.00% ✓</div>
+    </div>
+    <div class="cert-stamp">✓ OFFICIALLY REAL</div>
+    <div class="cert-fine">
+      This certificate confirms that the bearer has paid $1 and therefore exists.<br>
+      This document has no legal value whatsoever. The Global Existence Agency is not real.<br>
+      Approved by: The Department of Things We Made Up · Ref: GEA/2025/HUMAN/LOL
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMMENTS ═══ -->
+<section class="comments-section reveal">
+  <div style="max-width:700px;margin:0 auto;text-align:center;">
+    <p class="section-tag">// VERIFIED CITIZEN TESTIMONIALS — LIVE FEED</p>
+    <h2 class="section-title">What Verified Humans Say</h2>
+    <div class="comments-feed" id="commentsFeed"></div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-logo">GEA // GLOBAL EXISTENCE AGENCY</div>
+  <div class="footer-links">
+    <a href="#">Privacy Policy (We Don't Have One)</a>
+    <a href="#">Terms of Existence</a>
+    <a href="#">Contact the Void</a>
+    <a href="#">Unexistence Request Form</a>
+  </div>
+  <div class="footer-disc">
+    <em>⚠️ DISCLAIMER: This project has absolutely no scientific value. The Global Existence Agency is not a real government body. Your existence is not actually at risk (probably). This is a humorous fan project. No humans were unexisted in the making of this website. Any resemblance to actual global crises is purely coincidental and deeply concerning.</em>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOADING MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-spinner"></div>
+    <div class="modal-title">⚙ CONTACTING WORLD POPULATION SERVERS</div>
+    <div class="modal-status" id="modalStatus">
+      <div>Initializing existence protocol...</div>
+    </div>
+    <div class="modal-bar-wrap"><div class="modal-bar" id="modalBar"></div></div>
+  </div>
+</div>
+
+<script>
+// ── PARTICLES ──
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let pts = [];
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
+resize();window.addEventListener('resize',resize);
+for(let i=0;i<90;i++){
+  pts.push({
+    x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+    vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,
+    r:Math.random()*1.5+0.3,
+    a:Math.random()
+  });
+}
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>canvas.width)p.vx*=-1;
+    if(p.y<0||p.y>canvas.height)p.vy*=-1;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,180,255,${p.a*0.4})`;
+    ctx.fill();
+  });
+  // connections
+  pts.forEach((a,i)=>{
+    pts.slice(i+1).forEach(b=>{
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<100){
+        ctx.beginPath();
+        ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle=`rgba(0,180,255,${0.08*(1-d/100)})`;
+        ctx.lineWidth=0.5;ctx.stroke();
+      }
+    });
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ── CERT DATE ──
+const now = new Date();
+document.getElementById('certDate').textContent =
+  now.toISOString().slice(0,10).replace(/-/g,'.') + ' UTC';
+document.getElementById('certId').textContent =
+  'GEA-2025-' + Math.floor(Math.random()*9000000+1000000);
+
+// ── FAKE COUNTERS ──
+let verified = 3847;
+let unconfirmed = 2148302419;
+let accuracy = 31.4;
+
+function fmt(n){return n.toLocaleString();}
+function updateStats(){
+  verified += Math.floor(Math.random()*3);
+  unconfirmed -= Math.floor(Math.random()*5);
+  accuracy = Math.min(99.9, accuracy + 0.001);
+  document.getElementById('verifiedToday').textContent = fmt(verified);
+  document.getElementById('unconfirmed').textContent = fmt(unconfirmed);
+  document.getElementById('accuracy').textContent = accuracy.toFixed(1)+'%';
+}
+setInterval(updateStats, 2800);
+
+// ── LOADING MODAL ──
+const steps = [
+  {text:'Initializing existence protocol...', pct:10},
+  {text:'<span class="ok">✓</span> Pinging World Population HQ...', pct:22},
+  {text:'<span class="ok">✓</span> Scanning for ghost signatures...', pct:37},
+  {text:'<span class="ok">✓</span> Verifying you are not a robot...', pct:53},
+  {text:'<span class="ok">✓</span> Checking if you have a soul...', pct:68},
+  {text:'<span class="ok">✓</span> Consulting the United Nations...', pct:80},
+  {text:'<span class="ok">✓</span> Updating global population count...', pct:93},
+  {text:'<span class="ok">✓</span> Existence confirmed. Redirecting to PayPal...', pct:100},
+];
+
+function triggerExistence(){
+  const modal = document.getElementById('modal');
+  const statusEl = document.getElementById('modalStatus');
+  const bar = document.getElementById('modalBar');
+  modal.classList.add('show');
+  let i=0;
+  statusEl.innerHTML='';
+  bar.style.width='0%';
+
+  // Play beep using Web Audio API
+  try{
+    const ac=new AudioContext();
+    const osc=ac.createOscillator();
+    const gain=ac.createGain();
+    osc.connect(gain);gain.connect(ac.destination);
+    osc.frequency.setValueAtTime(880,ac.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(440,ac.currentTime+0.15);
+    gain.gain.setValueAtTime(0.15,ac.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.3);
+    osc.start();osc.stop(ac.currentTime+0.3);
+  }catch(e){}
+
+  function runStep(){
+    if(i>=steps.length){
+      setTimeout(()=>{
+        modal.classList.remove('show');
+        window.open('https://paypal.me/kevinMariusRamotlopi/1','_blank');
+        showToast('✓ EXISTENCE CONFIRMED — REDIRECTING TO PAYMENT SERVER');
+      },600);
+      return;
+    }
+    const s=steps[i];
+    statusEl.innerHTML += '<div>'+s.text+'</div>';
+    bar.style.width=s.pct+'%';
+    i++;
+    setTimeout(runStep,500+Math.random()*300);
+  }
+  runStep();
+}
+
+// click outside modal to close (but only after step 3)
+document.getElementById('modal').addEventListener('click',function(e){
+  if(e.target===this){this.classList.remove('show');}
+});
+
+// ── FAKE COMMENTS ──
+const allComments=[
+  {flag:'🇧🇼',name:'K. Ramotlopi',loc:'Botswana',text:'Botswana verified me instantly. I feel so seen. 🌍',time:'2s ago'},
+  {flag:'🇧🇷',name:'C. Santos',loc:'Brazil',text:'I almost stopped existing 😭 Thank God I found this in time.',time:'14s ago'},
+  {flag:'🇺🇸',name:'M. Johnson',loc:'USA',text:'Best $1 I ever spent. Worth every penny of my verified existence.',time:'31s ago'},
+  {flag:'🇿🇦',name:'T. Mokoena',loc:'South Africa',text:'Now my family knows I\'m real. No more arguments at dinner.',time:'45s ago'},
+  {flag:'🇯🇵',name:'H. Tanaka',loc:'Japan',text:'I was 404 Not Found for 3 years. This website saved me. 🙏',time:'1m ago'},
+  {flag:'🇫🇷',name:'A. Dupont',loc:'France',text:'The loading screen said I have a soul. I cried actual tears.',time:'2m ago'},
+  {flag:'🇩🇪',name:'L. Schmidt',loc:'Germany',text:'Very efficient. Takes only $1 to confirm existence. Very reasonable.',time:'3m ago'},
+  {flag:'🇳🇬',name:'O. Adeyemi',loc:'Nigeria',text:'My ghost probability is 0.00%. I showed my mother. She is proud.',time:'4m ago'},
+  {flag:'🇮🇳',name:'P. Sharma',loc:'India',text:'I verified 3 times just to be safe. Now I am very confirmed.',time:'5m ago'},
+  {flag:'🇦🇺',name:'B. Williams',loc:'Australia',text:'I asked if my dog could be verified. They said not yet. Stay tuned.',time:'7m ago'},
+  {flag:'🇲🇽',name:'J. Garcia',loc:'Mexico',text:'The Department of Human Statistics is very professional. 10/10.',time:'8m ago'},
+  {flag:'🇰🇪',name:'A. Ochieng',loc:'Kenya',text:'I sent the certificate to my boss. He gave me a raise. May not be related.',time:'10m ago'},
+];
+
+const feed = document.getElementById('commentsFeed');
+let ci = 0;
+
+function addComment(c,delay){
+  setTimeout(()=>{
+    const div=document.createElement('div');
+    div.className='comment';
+    div.style.animationDelay='0s';
+    div.innerHTML=`
+      <div class="comment-avatar">${c.flag}</div>
+      <div style="flex:1">
+        <div class="comment-name">${c.name} — ${c.loc}</div>
+        <div class="comment-text">${c.text}</div>
+        <div class="comment-meta">● VERIFIED HUMAN · ${c.time}</div>
+      </div>
+      <div class="comment-badge">VERIFIED ✓</div>
+    `;
+    feed.insertBefore(div,feed.firstChild);
+    while(feed.children.length>6)feed.removeChild(feed.lastChild);
+  },delay);
+}
+
+// Initial comments
+allComments.slice(0,5).forEach((c,i)=>addComment(c,i*200));
+ci=5;
+
+// Rolling comments
+setInterval(()=>{
+  addComment(allComments[ci%allComments.length],0);
+  ci++;
+}, 5000);
+
+// ── SCROLL REVEAL ──
+const reveals=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.15});
+reveals.forEach(r=>io.observe(r));
+
+// ── TOAST ──
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+// ── ROTATING LIVE NOTICES ──
+const notices=[
+  'Someone from Botswana just confirmed they exist.',
+  'Someone from Brazil just confirmed they exist.',
+  'Someone from Japan almost didn\'t exist — but paid in time.',
+  '3 unverified humans detected in your area.',
+  'The Department of Statistics thanks you for your cooperation.',
+  'Someone from Nigeria confirmed they exist AND their dog.',
+  'A ghost tried to verify. We rejected them. Stay vigilant.',
+  'Someone from Germany confirmed existence twice. Very thorough.',
+];
+let ni=0;
+const noticeEl=document.querySelector('.live-notice');
+setInterval(()=>{
+  ni=(ni+1)%notices.length;
+  noticeEl.innerHTML='<span>●</span> '+notices[ni];
+},4500);
+</script>
+</body>
+</html>
